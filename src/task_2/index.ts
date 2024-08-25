@@ -32,23 +32,50 @@ export interface IBankUser {
 }
 
 export class BankOffice {
-	private _users: any;
-	private _cards: any;
+	private _users: Partial<IBankUser>;
+	private _cards: ICard;
 
-	constructor(users: any, cards: any) {
+	constructor(users: Partial<IBankUser>, cards: ICard) {
 		this._users = users;
 		this._cards = cards;
 	}
 
-	public authorize(userId: any, cardId: any, cardPin: any): any {
+	public authorize(userId: string, cardId: string, cardPin: number): boolean {
 
+		if (this._users.cards == null) return false    //Есть ли карта у пользователя
+		let coincidence: boolean = false
+		for (let item of this._users.cards){
+			if (item.id == cardId && item.pin == cardPin.toString()){    //Если у пользователя есть необходимая карта и пинкод совпадает
+				coincidence = true
+			}
+		}
+		if (coincidence == true){
+			return true
+		}
+		return false
 	}
 
-	public getCardById(cardId: any): any {
-
+	public getCardById(cardId: string): ICard {
+		if(cardId == this._cards.id){
+			return this._cards
+		}
+		throw new Error("Card not found")
 	}
 
-	public isCardTiedToUser(cardId: any): any {
-
+	public isCardTiedToUser(cardId: string): boolean {
+		if(cardId != this._cards.id) return false
+		if((this._users.cards != null)){
+			let coincidence: boolean = false
+			for (let item of this._users.cards){
+				if(item.id == cardId){
+					coincidence = true
+					return true
+				}
+			}
+			if (coincidence == false){
+				return false
+			}
+		}
+		return false
 	}
 }

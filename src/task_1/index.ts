@@ -31,16 +31,37 @@ export interface IMoneyUnit {
 }
 
 export class MoneyRepository {
-	private _repository: any;
-	constructor(initialRepository: any) {
+	private _repository: number;
+	constructor(initialRepository: number) {
 		this._repository = initialRepository;
 	}
 
-	public giveOutMoney(count: any, currency: any): any {
-
+	public giveOutMoney(count: number, currency: string): boolean {
+		for(let i = 0; count != 0; i++){
+			if(count / 1000 >= 1){
+                let intCount: number = Math.trunc(count/1000);
+                count -= intCount*1000;
+			}
+			else if(count/200 >= 1){
+				let intCount: number = Math.trunc(count/200);
+                count -= intCount*200;
+			}
+			else if(count/100 >= 1){
+				let intCount: number = Math.trunc(count/100);
+                count -= intCount*100;
+			}
+			else if(count/50 >= 1){
+				let intCount: number = Math.trunc(count/50);
+                count -= intCount*50;
+			}
+            else if(count<50 && count>0){
+                return false;
+            }
+		}
+		return true;
 	}
 
-	public takeMoney(moneyUnits: any): any {
-
+	public takeMoney(moneyUnits: number): number {
+        return this._repository+= moneyUnits;
 	}
 }
